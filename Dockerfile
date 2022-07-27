@@ -13,6 +13,7 @@ RUN apt-get update && \
     python3-opencv \
     python3-tqdm \
     python3-pil \
+    vim \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
