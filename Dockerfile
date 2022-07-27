@@ -14,6 +14,7 @@ RUN apt-get update && \
     python3-tqdm \
     python3-pil \
     vim \
+    git \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
