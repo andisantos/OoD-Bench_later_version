@@ -1,7 +1,7 @@
 import argparse
 from typing import Union
 
-from domainbed.datasets import DATASETS
+# from domainbed.datasets import DATASETS
 from ood_bench.networks import BACKBONES
 
 
@@ -42,7 +42,8 @@ def add_training_arguments(parser: ParserOrGroup, export: bool = False) -> None:
         
     parser.add_argument('--data_dir', type=str, required=True, help='root directory '
                         'storing all datasets')
-    parser.add_argument('--dataset', type=str, required=True, choices=DATASETS)
+    # parser.add_argument('--dataset', type=str, required=True, choices=DATASETS)
+    parser.add_argument('--dataset', type=str, required=True, choices=["ColoredMNIST_IRM"])
     parser.add_argument('--envs_p', type=int, nargs='+', required=True,
                         help='indices of a set of environments')
     parser.add_argument('--envs_q', type=int, nargs='+', required=True,
@@ -95,7 +96,8 @@ def add_feature_extr_arguments(parser: ParserOrGroup, export: bool = False) -> N
         parser.add_argument('--seed', type=int)
 
         parser.add_argument('--data_dir', type=str)
-        parser.add_argument('--dataset', type=str, choices=DATASETS)
+        # parser.add_argument('--dataset', type=str, choices=DATASETS)
+        parser.add_argument('--dataset', type=str, choices="ColoredMNIST_IRM")
         parser.add_argument('--envs_p', type=int, nargs='+')
         parser.add_argument('--envs_q', type=int, nargs='+')
         parser.add_argument('--holdout_fraction', type=float)

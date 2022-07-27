@@ -29,6 +29,8 @@ class Trial(utils.Task):
         
     def start(self, worker_index: int) -> None:
         start_time = time.time()
+        print(worker_index)
+        print("--------------------")
         devices = self.visible_devices[worker_index]
         self.output_dir.mkdir(parents=True, exist_ok=True)
         if self.redirect_stdout_and_stderr:
