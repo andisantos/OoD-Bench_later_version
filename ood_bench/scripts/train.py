@@ -189,3 +189,4 @@ if __name__ == '__main__':
             state_dict[name[7:]] = state_dict[name]
             del state_dict[name]
     torch.save(state_dict, str(save_dir.joinpath('model.pth')))
+

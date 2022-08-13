@@ -14,7 +14,6 @@ import numpy as np
 
 from ood_bench import config, utils
         
-        
 class Trial(utils.Task):
     def __init__(self, subprocess_args: Tuple[dict, dict, dict], output_root: str,
                  visible_devices: Sequence[str], skip_quant: bool = False,
@@ -153,3 +152,4 @@ if __name__ == '__main__':
     cmd = utils.compose_command('ood_bench.scripts.summarize', args_dict, None)
     print('executing command:', cmd)
     subprocess.run(cmd, shell=True, check=True)
+
