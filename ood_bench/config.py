@@ -1,7 +1,7 @@
 import argparse
 from typing import Union
 
-# from domainbed.datasets import DATASETS
+from domainbed.datasets import DATASETS
 from ood_bench.networks import BACKBONES
 
 
@@ -42,8 +42,7 @@ def add_training_arguments(parser: ParserOrGroup, export: bool = False) -> None:
         
     parser.add_argument('--data_dir', type=str, required=True, help='root directory '
                         'storing all datasets')
-    # parser.add_argument('--dataset', type=str, required=True, choices=DATASETS)
-    parser.add_argument('--dataset', type=str, required=True, choices=["ColoredMNIST_IRM"])
+    parser.add_argument('--dataset', type=str, required=True, choices=DATASETS)
     parser.add_argument('--envs_p', type=int, nargs='+', required=True,
                         help='indices of a set of environments')
     parser.add_argument('--envs_q', type=int, nargs='+', required=True,

@@ -110,6 +110,9 @@ def calibrate(args: argparse.Namespace, calib_subarg_names: Iterable[str]) -> No
 
 if __name__ == '__main__':
     args, parser = config.parse_argument(Path(__file__).name)
+    print("\n*****")
+    print(args)
+    print("*****")
     subarg_name_groups = []
     for group in parser._action_groups:
         if group.title not in ('positional arguments', 'optional arguments'):

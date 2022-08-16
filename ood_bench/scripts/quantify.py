@@ -100,6 +100,9 @@ if __name__ == '__main__':
     args, _ = config.parse_argument(Path(__file__).name)
     random.seed(args.seed)
     np.random.seed(args.seed)
+    print("\n*****")
+    print(args)
+    print("*****")
     
     save_dir = Path(args.output_dir or args.feature_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
