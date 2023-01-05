@@ -14,6 +14,7 @@ RUN apt-get update && \
     python3-opencv \
     python3-tqdm \
     python3-pil \
+    zip \
     vim \
     git \
     && \
