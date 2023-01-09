@@ -24,7 +24,7 @@ RUN apt-get update && \
 RUN pip3 install scipy==1.5.4 \
     scikit-learn==1.0.2 \
     Pillow==8.4.0 \
-    torchvision==0.11.2 \
+    torchvision==0.11.1 \
     torch_scatter==2.0.9 \
     pandas==1.3.5 
 
