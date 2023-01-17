@@ -34,7 +34,6 @@ FROM base AS base-jupyter
 
 RUN apt-get update && \
     apt-get install --yes \
-    python3-seaborn \
     jupyter && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
