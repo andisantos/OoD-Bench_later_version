@@ -32,6 +32,7 @@ DATASETS = [
     "TerraIncognita",
     "DomainNet",
     "SVIRO",
+    "SceneDatasets",
     # WILDS datasets
     "WILDSCamelyon",
     "WILDSFMoW"
@@ -328,7 +329,7 @@ class PACS(MultipleEnvironmentImageFolder):
 
 class SceneDatasets(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
-    ENVIRONMENTS = ["SUN397", "MITIndoors"]
+    ENVIRONMENTS = ["SUN397_8", "MIT_Indoors_8"]
     def __init__(self, root, test_envs, hparams):
         self.dir = os.path.join(root, "SceneDatasets/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)

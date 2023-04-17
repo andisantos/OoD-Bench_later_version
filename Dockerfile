@@ -41,4 +41,4 @@ RUN apt-get update && \
 EXPOSE 8888
 ENTRYPOINT ["jupyter", "notebook", "--ip=0.0.0.0", \
             "--no-browser", "--allow-root", \
-            "--notebook-dir=/notebooks"]
+            "--notebook-dir=/src"]
