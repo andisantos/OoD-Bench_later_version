@@ -26,6 +26,7 @@ def evaluate(model: nn.Module, zipped_minibatches: Iterable, device: str) -> flo
     n_examples = 0
     n_correct_preds = 0
     for i, minibatches in enumerate(zipped_minibatches):
+        print(f"Running evaluate on minibatch {i}")
         x, y = map(torch.cat, zip(*minibatches))
         e = torch.cat([torch.zeros(x.size(0) // 2, dtype=torch.long),
                        torch.ones (x.size(0) // 2, dtype=torch.long)])
@@ -39,6 +40,7 @@ def evaluate(model: nn.Module, zipped_minibatches: Iterable, device: str) -> flo
         _, pred = torch.max(logits.data, 1)
         n_correct_preds += (pred == e).long().sum().item()
         n_examples += x.size(0)
+    print("Finished")
     
     model.train()
     return n_correct_preds / n_examples
@@ -141,8 +143,10 @@ if __name__ == '__main__':
     training_loss = utils.ExponentialMovingAverage(0.1)
     training_acc = utils.ExponentialMovingAverage(0.1)
     for epoch in range(1, args.n_epochs + 1):
+        print("Started an epoch...")
         epoch_start_time = time.time()
         for i, minibatches in enumerate(zip(in_dataloader_p, in_dataloader_q)):
+            print(f"Started minibatch {i}")
             model.train()
             x, y = map(torch.cat, zip(*minibatches))
             e = torch.cat([torch.zeros(args.batch_size, dtype=torch.long),
@@ -174,6 +178,7 @@ if __name__ == '__main__':
             print(f'epoch {epoch} / {args.n_epochs} finished in {epoch_time_spent}')
             print(f'training loss (ema): {training_loss.ema:.4f}')
             print(f'     accuracy (ema): {training_acc.ema:.4f}')
+            print("Calculating val accuracy...")
             val_acc = evaluate(model, zip(out_dataloader_p, out_dataloader_q), device)
             print(f'validation accuracy: {val_acc:.4f}')
             if epoch > args.swa_start:
