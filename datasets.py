@@ -32,7 +32,8 @@ DATASETS = [
     "TerraIncognita",
     "DomainNet",
     "SVIRO",
-    "SceneDatasets",
+    "",
+    "SceneDatasetsFolder",
     # WILDS datasets
     "WILDSCamelyon",
     "WILDSFMoW"
@@ -327,7 +328,66 @@ class PACS(MultipleEnvironmentImageFolder):
         self.dir = os.path.join(root, "PACS/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
-class SceneDatasets(MultipleEnvironmentImageFolder):
+class SceneDatasets_Environment(Dataset):
+    def __init__(self, split_npy, transform=None):
+        self.transform = transform
+        self.samples = []
+        self.classes = {
+            'bathroom': 0,
+            'bedroom': 1,
+            'childs_room': 2,
+            'classroom': 3,
+            'dressing_room': 4,
+            'living_room': 5,
+            'studio': 6,
+            'swimming_pool': 7
+        }
+        with open(split_npy) as f:
+            reader = np.load(f)
+            for [img_path, label] in reader:
+                self.samples.append((img_path, self.classes[label]))
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, index):
+        img_path, label = self.samples[index]
+        image = Image.open(img_path).convert('RGB')
+        if self.transform:
+            image = self.transform(image)
+        label = torch.tensor(label)
+        return image, label
+
+
+class SceneDatasets(MultipleDomainDataset):
+    CHECKPOINT_FREQ = 300
+    ENVIRONMENTS = ["MIT_Indoors_samples_paths_and_labels_complete", "SUN397_Indoors_samples_split_seed42"]
+    BASEFOLDERS = ["MIT_Indoors_8", "SUN397_8"]
+    def __init__(self, root, test_envs, hparams):
+        super().__init__()
+
+        transform = get_transform()
+        augment_scheme = hparams.get('data_augmentation_scheme', 'default')
+        augment_transform = get_augment_transform(augment_scheme)
+
+        self.datasets = []
+        for i, env_name in enumerate(self.ENVIRONMENTS):
+            if hparams['data_augmentation'] and (i not in test_envs):
+                env_transform = augment_transform
+            else:
+                env_transform = transform
+            split_npy = Path(root, self.BASEFOLDERS[i],
+                             f'{env_name}.npy')
+            dataset = SceneDatasets_Environment(
+                split_npy,
+                env_transform)
+            self.datasets.append(dataset)
+
+        self.input_shape = (3, 224, 224,)
+        self.num_classes = 8
+
+
+class SceneDatasetsFolder(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ["SUN397_8", "MIT_Indoors_8"]
     def __init__(self, root, test_envs, hparams):
