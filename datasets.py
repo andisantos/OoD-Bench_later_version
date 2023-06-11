@@ -32,7 +32,7 @@ DATASETS = [
     "TerraIncognita",
     "DomainNet",
     "SVIRO",
-    "",
+    "SceneDatasets",
     "SceneDatasetsFolder",
     # WILDS datasets
     "WILDSCamelyon",
@@ -342,10 +342,9 @@ class SceneDatasets_Environment(Dataset):
             'studio': 6,
             'swimming_pool': 7
         }
-        with open(split_npy) as f:
-            reader = np.load(f)
-            for [img_path, label] in reader:
-                self.samples.append((img_path, self.classes[label]))
+        reader = np.load(split_npy)
+        for [img_path, label] in reader:
+            self.samples.append((img_path, self.classes[label]))
 
     def __len__(self):
         return len(self.samples)
