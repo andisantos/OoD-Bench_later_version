@@ -125,6 +125,7 @@ class Debug28(Debug):
     INPUT_SHAPE = (3, 28, 28)
     ENVIRONMENTS = ['0', '1', '2']
 
+
 class Debug224(Debug):
     INPUT_SHAPE = (3, 224, 224)
     ENVIRONMENTS = ['0', '1', '2']
@@ -314,6 +315,7 @@ class MultipleEnvironmentImageFolder(MultipleDomainDataset):
         self.input_shape = (3, 224, 224,)
         self.num_classes = len(self.datasets[-1].classes)
 
+
 class VLCS(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ["C", "L", "S", "V"]
@@ -321,12 +323,14 @@ class VLCS(MultipleEnvironmentImageFolder):
         self.dir = os.path.join(root, "VLCS/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
+
 class PACS(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ["A", "C", "P", "S"]
     def __init__(self, root, test_envs, hparams):
         self.dir = os.path.join(root, "PACS/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
+
 
 class SceneDatasets_Environment(Dataset):
     def __init__(self, split_npy, transform=None):
@@ -393,12 +397,14 @@ class SceneDatasetsFolder(MultipleEnvironmentImageFolder):
         self.dir = os.path.join(root, "SceneDatasets/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
+
 class DomainNet(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 1000
     ENVIRONMENTS = ["clip", "info", "paint", "quick", "real", "sketch"]
     def __init__(self, root, test_envs, hparams):
         self.dir = os.path.join(root, "domain_net/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
+
 
 class OfficeHome(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
@@ -407,12 +413,14 @@ class OfficeHome(MultipleEnvironmentImageFolder):
         self.dir = os.path.join(root, "office_home/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
+
 class TerraIncognita(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ["L100", "L38", "L43", "L46"]
     def __init__(self, root, test_envs, hparams):
         self.dir = os.path.join(root, "terra_incognita/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
+
 
 class SVIRO(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
