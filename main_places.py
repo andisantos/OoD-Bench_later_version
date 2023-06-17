@@ -239,6 +239,9 @@ def main():
     config.load_model = load_model
     config.lr_part = lr_part
     
+    #####
+    # Dataloaders for FE
+    #####
     data_path = "Places8_paths_and_labels_complete_train.npy"
     train_ds = PlacesDataset(data_path)
     val_ds = PlacesDataset(data_path)
@@ -246,27 +249,76 @@ def main():
         '0': train_ds,
         '1': val_ds
     }
-    
-    # Dataloaders
     train_dl = DataLoader(datasets[0], batch_size=batch_size)
     val_dl = DataLoader(datasets[1], batch_size=batch_size )
     
-    
+    #####
     # Dataloaders per label (partition)
+    #####
     data_sampler = None
     shuffle = True
     train_part_ds = [
         PlacesDataset(data_path, onlylabels=[k]) for k in range(n_classes)]
     train_dataloaders_class = {k: DataLoader(train_part_ds[k], batch_size=batch_size) for k in range(n_classes)}
-    
     val_part_ds = [
         PlacesDataset(data_path, onlylabels=[k]) for k in range(n_classes)]
     val_dataloaders_class = {k: DataLoader(val_part_ds[k], batch_size=batch_size) for k in range(n_classes)}
     
 
-    # Feature Extractor
+    # Feature Extractor & train feature extractor on train_dl (when not using pretrained weights)
     model = torchvision.models.resnet18(pretrained=True)
+    model.fc = torch.nn.Identity()
     
-    # Train Feature Extractor 
     # Train especialized Nets  (partitions - extract biases/reference models?)
+    # create one model per class, each model is trained using eiilloss
+    # and will find a partition to divide data into 2 groups
+    ###################
+    # MODEL PARTITION #
+    ###################
+    model_g = []
+    for i in range(n_classes):
+        model_g.append(g_class(feat_size=feat_size))
+        model_g[i].to(device)
+        wandb.watch(model_g[i], idx=i+1)
+
+    criterion_g = EIILLoss()
+    
+    optimizer_g = []
+    for i in range(n_classes):
+        optimizer_g.append(optim.Adam(model_g[i].parameters(), lr=lr_part))
+
+    losses = []
+    best_loss = []
+    loss_train = {}
+    for i in range(n_classes):
+        best_loss.append(1000)
+    
+    for i in range(n_classes):
+        loss_train[i] = []
+    
+    for epoch in range(epochs_part):
+        print("## EPOCH {} ##".format(epoch))
+        metrics_comet_g = {}
+        for k in range(n_classes):
+            loss_k, _, _, _ = q_train_epoch(
+                device, model, model_g[k], train_dataloaders_class,
+                optimizer_g[k], None, criterion_g, k, 'train')
+            loss_train[k].append(loss_k)
+        
+            #losses.append(np.array([loss0, loss1, loss2, loss3, loss4, loss5, loss6, loss7, loss8]))
+            if loss_k < best_loss[k]:
+                print('best loss achieved at epoch {} for g{}: {}'.format(epoch, k, loss_k))
+                torch.save(model_g[k], 'results-comet/{}/tmp{}.pth'.format(exp_name, k))
+                best_loss[k] = loss_k
+        
+        
+            metrics_comet_g.update({'G{} train/lr'.format(k): optimizer_g[k].param_groups[0]['lr'],
+                                    'G{} train/loss'.format(k): loss_k, 'epoch':epoch})
+        #experiment.log_metrics(metrics_comet_g, epoch=epoch+1)
+        wandb.log(metrics_comet_g, commit=True)
+        print('epoch:', epoch, '|', metrics_comet_g)
+
+    ######################
+    # PARTITION ANALYSIS #
+    ######################      
 
