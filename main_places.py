@@ -12,7 +12,7 @@ import torch.nn as nn
 import numpy as np
 import torch.optim as optim
 import tqdm
-
+import torchvision
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
@@ -238,36 +238,35 @@ def main():
     config.n_classes = n_classes
     config.load_model = load_model
     config.lr_part = lr_part
-     
-    train_ds = PlacesDataset()
-    val_ds = PlacesDataset()
-    # test_ds = PlacesDataset()
+    
+    data_path = "Places8_paths_and_labels_complete_train.npy"
+    train_ds = PlacesDataset(data_path)
+    val_ds = PlacesDataset(data_path)
     datasets = {
         '0': train_ds,
         '1': val_ds
     }
-
+    
     # Dataloaders
-    train_dl = DataLoader(datasets[0], ...., sampler=data_sampler,
-                          pin_memory=True)
-    val_dl = DataLoader(datasets[1], ...., sampler=data_sampler,
-                        pin_memory=True)
+    train_dl = DataLoader(datasets[0], batch_size=batch_size)
+    val_dl = DataLoader(datasets[1], batch_size=batch_size )
     
     
     # Dataloaders per label (partition)
     data_sampler = None
     shuffle = True
     train_part_ds = [
-        PlacesDataset(..., onlylabels=[k]) for k in range(8)]
-    train_dataloaders_class = {k: DataLoader(train_part_ds[k], ...) for k in range(8)}
+        PlacesDataset(data_path, onlylabels=[k]) for k in range(n_classes)]
+    train_dataloaders_class = {k: DataLoader(train_part_ds[k], batch_size=batch_size) for k in range(n_classes)}
     
     val_part_ds = [
-        PlacesDataset(..., onlylabels=[k]) for k in range(8)]
-    val_dataloaders_class = {k: DataLoader(val_part_ds[k], ...) for k in range(8)}
+        PlacesDataset(data_path, onlylabels=[k]) for k in range(n_classes)]
+    val_dataloaders_class = {k: DataLoader(val_part_ds[k], batch_size=batch_size) for k in range(n_classes)}
     
 
     # Feature Extractor
-
+    model = torchvision.models.resnet18(pretrained=True)
+    
     # Train Feature Extractor 
     # Train especialized Nets  (partitions - extract biases/reference models?)
 

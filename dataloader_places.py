@@ -2,19 +2,18 @@ import numpy as np
 import torch
 from PIL import Image
 from torch.utils.data import Dataset
+from torchvision.datasets.folder import default_loader
 from torchvision import transforms
 
-# def get_transform(input_size=224):
-#     return transforms.Compose([
-#         transforms.Resize((input_size, input_size)),
-#         transforms.ToTensor(),
-#         get_normalize(),
-#     ])
 
-# def get_normalize():
-#     return transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+def get_transform(input_size=224):
+    return transforms.Compose([
+        transforms.Resize((input_size, input_size)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
 
-def PlacesDataset(Dataset):
+class PlacesDataset(Dataset):
     def __init__(self, dataset_npy:str, transform = None, onlylabels=None):
         self.data = []
         self.classes = {
@@ -27,14 +26,16 @@ def PlacesDataset(Dataset):
             'studio': 6,
             'swimming_pool': 7
         }
+        self.idx_to_class = {str(idx): value for idx, value in enumerate(self.classes.keys())}
+        
         self.onlylabels = onlylabels
-        self.transform = transform
+        self.transform = get_transform()
         reader = np.load(dataset_npy)
         for [img_path, label] in reader:
             self.data.append((img_path, self.classes[label])) #for some reason, label is str
-        self.data = np.asarray(self.data) # data = [['fullpath', 'label'], ....]
+        self.data = np.array(self.data) # data = [['fullpath', 'label'], ....]
+        print("dataset_size", self.data.size)
         
-
         if self.onlylabels is not None:
             self.onlylabels = [int(i) for i in self.onlylabels]
             clip_indexes = np.where(self.data[:, 1] == str(self.onlylabels[0]))[0] # indexes
@@ -44,14 +45,15 @@ def PlacesDataset(Dataset):
             clip_indexes.sort()
             self.data = self.data[clip_indexes]
         labels, counts = np.unique(self.data[:, 1], return_counts = True)
-        labels = labels.astype(int) # labels are integers folowwing self.classes
+        self.labels = labels.astype(int) # labels are integers folowwing self.classes
         
 
         # Calculate class weights for WeightedRandomSampler
         self.class_counts = dict(zip(labels, counts))
         self.class_weights = {label: max(self.class_counts.values()) / count
                               for label, count in self.class_counts.items()}
-        self.sampler_weights = [self.class_weights[int(cls)] for cls in self.data[:, 1]]
+        self.sampler_weights = [self.class_weights[cls] for cls in self.data[:, 1]]
+        
         self.class_weights_list = [self.class_weights[k]
                                    for k in sorted(self.class_weights)]
 
@@ -59,16 +61,17 @@ def PlacesDataset(Dataset):
                                                         len(self.labels)))
         for idx in self.class_counts.keys():
             print("    Class '{}' ({}): {} images.".format(
-                self.classes[idx], idx, self.class_counts[idx]))
+                  self.idx_to_class[idx], idx, self.class_counts[idx]))
+            
 
     def __getitem__(self, index:int):
-        img_path, label = self.samples[index]
+        img_path, label = self.data[index]
         image = Image.open(img_path).convert('RGB')
+        
         if self.transform:
             image = self.transform(image)
-        label = torch.tensor(label)
+        label = torch.tensor(int(label))
         return image, label
 
     def __len__(self):
-        return len(self.samples)
-    
+        return len(self.data)
