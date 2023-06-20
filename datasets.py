@@ -364,10 +364,12 @@ class SceneDatasets_Environment(Dataset):
 
 class SceneDatasets(MultipleDomainDataset):
     CHECKPOINT_FREQ = 300
-    #ENVIRONMENTS = ["MIT_Indoors_samples_paths_and_labels_complete", "SUN397_Indoors_samples_split_seed42"]
-    #BASEFOLDERS = ["MIT_Indoors_8", "SUN397_8"]
+    #ENVIRONMENTS = ["ImageNet8_samples_paths_and_labels", "MIT_Indoors_samples_paths_and_labels_complete", "SUN397_Indoors_samples_split_seed42"]
+    #BASEFOLDERS = ["Imagenet_8", "MIT_Indoors_8", "SUN397_8"]
     ENVIRONMENTS = ["MIT_Indoors_samples_paths_and_labels_complete", "ImageNet8_samples_paths_and_labels"]
     BASEFOLDERS = ["MIT_Indoors_8", "Imagenet_8"]
+    # ENVIRONMENTS = ["ImageNet8_samples_paths_and_labels", "SUN397_Indoors_samples_split_seed42"]
+    # BASEFOLDERS = ["Imagenet_8", "SUN397_8"]
     def __init__(self, root, test_envs, hparams):
         super().__init__()
 
