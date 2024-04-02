@@ -369,14 +369,13 @@ class SceneDatasets(MultipleDomainDataset):
     #BASEFOLDERS = ["Imagenet_8", "MIT_Indoors_8", "SUN397_8"]
     #ENVIRONMENTS = ["MIT_Indoors_samples_paths_and_labels_complete", "ImageNet8_samples_paths_and_labels"]
     #BASEFOLDERS = ["MIT_Indoors_8", "Imagenet_8"]
-    
 #     ENVIRONMENTS = ["ImageNet8_samples_paths_and_labels", "SUN397_Indoors_samples_split_seed42"]
 #     BASEFOLDERS = ["Imagenet_8", "SUN397_8"]
 
     BASEFOLDERS = ["places8_train", "places8_test"] #index 0 : treino | index 1: test
-    ENVIRONMENTS = ["plces8_train_ood_bench_0.7", "places8_test_0.7"]
-#     ENVIRONMENTS = ["plces8_train_ood_bench_0.8", "places8_test_0.8"]
-#     ENVIRONMENTS = ["plces8_train_ood_bench_0.9", "places8_test_0.9"]
+#    ENVIRONMENTS = ["domino_train","domino_test"]
+    ENVIRONMENTS = ["train_creager_0.8", "test_creager_0.8"]
+    
     def __init__(self, root, test_envs, hparams):
         super().__init__()
 

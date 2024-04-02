@@ -25,8 +25,9 @@ def evaluate(model: nn.Module, zipped_minibatches: Iterable, device: str) -> flo
     
     n_examples = 0
     n_correct_preds = 0
+    print("Running evaluate...")
     for i, minibatches in enumerate(zipped_minibatches):
-        print(f"Running evaluate on minibatch {i}")
+#         print(f"Running evaluate on minibatch {i}")
         x, y = map(torch.cat, zip(*minibatches))
         e = torch.cat([torch.zeros(x.size(0) // 2, dtype=torch.long),
                        torch.ones (x.size(0) // 2, dtype=torch.long)])
@@ -146,7 +147,7 @@ if __name__ == '__main__':
         print("Started an epoch...")
         epoch_start_time = time.time()
         for i, minibatches in enumerate(zip(in_dataloader_p, in_dataloader_q)):
-            print(f"Started minibatch {i}")
+#             print(f"Started minibatch {i}")
             model.train()
             x, y = map(torch.cat, zip(*minibatches))
             e = torch.cat([torch.zeros(args.batch_size, dtype=torch.long),
