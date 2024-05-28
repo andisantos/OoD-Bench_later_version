@@ -29,9 +29,9 @@ RUN wget \
 COPY . /src
 WORKDIR /src
 #RUN conda install -y -f /src/requirements.txt
-RUN conda install pytorch==1.10.1 torchvision==0.11.2 torchaudio==0.10.1 -c pytorch
-RUN conda install pandas scikit-learn matplotlib numpy
-RUN conda install jupyter notebook scipy=1.5.2
+RUN conda install -y pytorch==1.10.1 torchvision==0.11.2 torchaudio==0.10.1 -c pytorch
+RUN conda install -y pandas scikit-learn matplotlib numpy
+RUN conda install -y jupyter notebook scipy=1.5.2
 
 #RUN pip3 install -r /src/requirements.txt
 #RUN pip3 install pandas
